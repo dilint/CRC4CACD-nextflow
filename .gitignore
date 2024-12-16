@@ -1,0 +1,6 @@
+checkpoints
+.nextflow*
+result
+test.json
+__pycache__/
+/work
