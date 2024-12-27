@@ -201,8 +201,8 @@ data = dict(
         ann_file='/root/commonfile/data/ComparisonDetectorDataset/train.json',
         img_prefix='/root/commonfile/data/ComparisonDetectorDataset/train/',
         pipeline=train_pipeline,
-        classes=('ascus', 'asch', 'lsil', 'hsil',
-                 'scc', 'agc', 'trichomonas', 'candida'
+        classes=('ascus', 'asch', 'lsil', 'hsil', 'scc',
+                 'agc', 'trichomonas', 'candida',
                  'flora', 'herps', 'actinomyces')),
     val=dict(
         type='CocoDataset',
@@ -227,13 +227,13 @@ data = dict(
                     dict(type='Collect', keys=['img'])
                 ])
         ],
-        classes=('ascus', 'asch', 'lsil', 'hsil',
-                 'scc', 'agc', 'trichomonas', 'candida'
+        classes=('ascus', 'asch', 'lsil', 'hsil', 'scc',
+                 'agc', 'trichomonas', 'candida',
                  'flora', 'herps', 'actinomyces')),
     test=dict(
         type='CocoDataset',
-        ann_file='../test.json',
-        img_prefix='../test_data',
+        ann_file='/root/commonfile/data/ComparisonDetectorDataset/test.json',
+        img_prefix='/root/commonfile/data/ComparisonDetectorDataset/test/',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -253,8 +253,8 @@ data = dict(
                     dict(type='Collect', keys=['img'])
                 ])
         ],
-        classes=('ascus', 'asch', 'lsil', 'hsil',
-                 'scc', 'agc', 'trichomonas', 'candida'
+        classes=('ascus', 'asch', 'lsil', 'hsil', 'scc',
+                 'agc', 'trichomonas', 'candida',
                  'flora', 'herps', 'actinomyces')))
 evaluation = dict(interval=2, metric='bbox')
 optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
@@ -273,8 +273,8 @@ log_level = 'INFO'
 load_from = None
 resume_from = None
 workflow = [('train', 1)]
-classes = ('ascus', 'asch', 'lsil', 'hsil',
-            'scc', 'agc', 'trichomonas', 'candida'
-            'flora', 'herps', 'actinomyces')
+classes = ('ascus', 'asch', 'lsil', 'hsil', 'scc',
+                 'agc', 'trichomonas', 'candida',
+                 'flora', 'herps', 'actinomyces')
 work_dir = 'work_dir/roi_attention/cas_rram_gram/128_naive_unshared_loss_level0_multiscale_48ep_0520/'
 gpu_ids = range(0, 1)

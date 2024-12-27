@@ -100,14 +100,15 @@ process model{
     output:
     path 'result.txt', emit: result
 
+        // --ann-file ${projectDir}/test.json\
+        // --img-prefix ${projectDir}/test_data \
     """
     echo ${params.result} > result.txt
     python ${projectDir}/model/tools/test.py \
         --show-dir ${projectDir}/result \
-        --ann-file ${projectDir}/test.json\
-        --img-prefix ${projectDir}/test_data \
+        --output-eval ${projectDir}/result.txt \
         --config ${projectDir}/model/configs/ComparisonDetectorDataset/cas_rram_gram_multi.py \
-        --checkpoint ${projectDir}/checkpoints/cas_rram_gram_multi_epoch_24.pth >> result.txt
+        --checkpoint ${projectDir}/checkpoints/cas_rram_gram_multi_epoch_24.pth
     """
 }
 

@@ -1,6 +1,7 @@
 checkpoints
 .nextflow*
-result
+result*
 test.json
 __pycache__/
 /work
+/data

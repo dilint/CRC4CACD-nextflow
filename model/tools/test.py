@@ -20,11 +20,12 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='MMDet test (and eval) a model')
     parser.add_argument('--work-path', type=str, default='.', help='work path of workflow')
-    parser.add_argument('--config', default='model/configs/ComparisonDetectorDataset/cas_rram_gram_multi.py', help='test config file path')
-    parser.add_argument('--checkpoint', default='checkpoints/cas_rram_gram_multi_epoch_24.pth', help='checkpoint file')
-    parser.add_argument('--ann-file', default='test.json', help='checkpoint file')
-    parser.add_argument('--img-prefix', default='test_data', help='checkpoint file')
+    parser.add_argument('--config', default='configs/ComparisonDetectorDataset/cas_rram_gram_multiv1.py', help='test config file path')
+    parser.add_argument('--checkpoint', default='../checkpoints/cas_rram_gram_multi_epoch_24.pth', help='checkpoint file')
+    parser.add_argument('--ann-file', default=None, type=str, help='checkpoint file')
+    parser.add_argument('--img-prefix', default=None, type=str, help='checkpoint file')
     parser.add_argument('--out', help='output result file in pickle format')
+    parser.add_argument('--output-eval', type=str, default='result.txt', help='output result file in pickle format')
     parser.add_argument('--show-dir', help='directory where painted images will be saved')
     parser.add_argument(
         '--fuse-conv-bn',
@@ -39,8 +40,9 @@ def parse_args():
         'submit it to the test server')
     parser.add_argument(
         '--eval',
-        type=str,
-        nargs='+',
+        # type=str,
+        # nargs='+',
+        default=['bbox'],
         help='evaluation metrics, which depends on the dataset, e.g., "bbox",'
         ' "segm", "proposal" for COCO, and "mAP", "recall" for PASCAL VOC')
     parser.add_argument('--show', action='store_true', help='show results')
@@ -98,11 +100,10 @@ def parse_args():
 
 def main():
     args = parse_args()
-    if args.show_dir is not None:
-        args.show_dir = os.path.join(args.work_path, args.show_dir)
+
     if args.out is not None:
         args.out = os.path.join(args.work_path, args.out)
-    
+
     # assert args.out or args.eval or args.format_only or args.show \
     #     or args.show_dir, \
     #     ('Please specify at least one operation (save/eval/format/show the '
@@ -116,8 +117,9 @@ def main():
         raise ValueError('The output file must be a pkl file.')
 
     cfg = Config.fromfile(args.config)
-    cfg.data['test']['ann_file'] = args.ann_file
-    cfg.data['test']['img_prefix'] = args.img_prefix
+    if args.img_prefix:
+        cfg.data['test']['ann_file'] = args.ann_file
+        cfg.data['test']['img_prefix'] = args.img_prefix
     if args.cfg_options is not None:
         cfg.merge_from_dict(args.cfg_options)
     # import modules from string list.
@@ -242,7 +244,12 @@ def main():
             for key in ['interval', 'tmpdir', 'start', 'gpu_collect']:
                 eval_kwargs.pop(key, None)
             eval_kwargs.update(dict(metric=args.eval, **kwargs))
-            print(dataset.evaluate(outputs, **eval_kwargs))
+            eval_dict = dataset.evaluate(outputs, **eval_kwargs)
+            # 保留两位小数
+            eval_dict = {key: round(value, 2) if isinstance(value, (int, float)) else \
+                         ' '.join(map(str, map(lambda x: round(float(x), 2), value.split()))) for key, value in eval_dict.items()}
+            with open(args.output_eval, 'w') as file:
+                file.write(str(eval_dict))
 
 if __name__ == '__main__':
     main()
